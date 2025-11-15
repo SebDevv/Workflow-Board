@@ -3,14 +3,106 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Workflow Board</title>
-  <script type="module" crossorigin src="/Workflow-Board/assets/index-CYtMaBvB.js"></script>
-  <link rel="stylesheet" crossorigin href="/Workflow-Board/assets/index-Cr-6DA6s.css">
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      color: #111;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    .list {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 8px;
+      margin: 8px;
+      min-width: 200px;
+      display: inline-block;
+      vertical-align: top;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    body.dark .list {
+      background-color: #1e1e1e;
+      border-color: #333;
+    }
+
+    .card {
+      background-color: #eee;
+      padding: 6px;
+      margin-bottom: 6px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    body.dark .card {
+      background-color: #2a2a2a;
+    }
+
+    .lists-container {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      overflow-x: auto;
+    }
+  </style>
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900">
-  <div id="root"></div>
+<body>
+  <div class="lists-container" id="listsContainer">
+    <!-- Example list/cards -->
+    <div class="list">
+      <strong>To Do</strong>
+      <div class="card">Example card 1</div>
+      <div class="card">Example card 2</div>
+    </div>
+    <div class="list">
+      <strong>In Progress</strong>
+      <div class="card">Example card 3</div>
+    </div>
+    <div class="list">
+      <strong>Done</strong>
+      <div class="card">Example card 4</div>
+    </div>
+  </div>
+
+  <script>
+    // Listen for theme messages from parent
+    window.addEventListener('message', (event) => {
+      if (!event.data) return;
+
+      if (event.data.type === 'SET_THEME') {
+        if (event.data.dark) {
+          document.body.classList.add('dark');
+        } else {
+          document.body.classList.remove('dark');
+        }
+      }
+    });
+
+    // Send initial height to parent
+    function sendHeight() {
+      const height = document.documentElement.scrollHeight;
+      window.parent.postMessage({ type: 'HEIGHT', height }, '*');
+    }
+
+    sendHeight();
+
+    // Observe changes to body size and update parent
+    const resizeObserver = new ResizeObserver(sendHeight);
+    resizeObserver.observe(document.body);
+  </script>
 </body>
 
 </html>
